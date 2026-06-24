@@ -73,6 +73,7 @@ class App {
 
     async predict() {
         if (!this.isRunning || !this.camera.isReady() || !this.detector.isLoaded()) {
+            this.stopPrediction();
             return;
         }
         
