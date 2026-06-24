@@ -11,7 +11,7 @@ class CameraIntegration {
 	/**
 	 * TODO:
 	 * Inisialisasi elemen:
-	 * [] Video
+	 * [✓] Video
 	 * [] Select Camera
 	 * [] Start & Stop Button 
 	 * [] Pilih FPS 
@@ -27,18 +27,18 @@ class CameraIntegration {
 	/**
 	 * TODO:
 	 * Daftarkan event listener untuk elemen:
-	 * [] Start & Stop Button 
-	 * [] Pilih kamera
-	 * [] Pilih FPS 
+	 * [✓] Start & Stop Button
+	 * [✓] Pilih kamera
+	 * [] Pilih FPS
 	*/
 	bindEvents() {
-		// this.startBtn.onClick = () => this.startCamera();
-		// this.stopBtn.onClick = () => this.stopCamera();
+		this.startBtn.onclick = () => this.startCamera();
+		this.stopBtn.onclick = () => this.stopCamera();
 	}
 
 	/**
 	 * TODO:
-	 * [] Muat daftar kamera yang tersedia
+	 * [✓] Muat daftar kamera yang tersedia
 	*/
 	async init() {
 		this.loadCamera();
@@ -46,7 +46,7 @@ class CameraIntegration {
 
 	/**
 	 * TODO:
-	 * [] Implementasi metode untuk memuat daftar kamera yang tersedia
+	 * [✓] Implementasi metode untuk memuat daftar kamera yang tersedia
 	*/
 	async loadCamera() {
 		try {
@@ -60,7 +60,6 @@ class CameraIntegration {
 				this.startBtn.disabled = true;
 				return;
 			}
-
 
 			cameras.forEach((camera, index) => {
 				const option = document.createElement('option');
@@ -79,45 +78,43 @@ class CameraIntegration {
 
 	/**
 	 * TODO:
-	 * [] Cek apakah perangkat adalah mobile
-	 * [] Pengaturan constraints kamera
+	 * [✓] Cek apakah perangkat adalah mobile
+	 * [✓] Pengaturan constraints kamera
 	 * [] Optimasi frame rate
 	*/
 	async startCamera() {
 		const isMobile = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-
-
 		try {
 			this.startBtn.disabled = true;
-			this.startBtn.textContent = 'Starting...';
+			this.startBtn.textContent = 'Memulai...';
 
 			const deviceList = this.cameraSelect.value ? { exact: this.cameraSelect.value } : undefined;
-			const facingMode = isMobile ? 'user' : 'environtment';
-
+			const facingMode = isMobile ? 'environment' : 'user';
 			this.stream = await navigator.mediaDevices.getUserMedia({
 				video: {
 					deviceId: deviceList,
-					facingMode: facingMode,
 					width: { ideal: isMobile ? 480 : 640 },
-					height: { ideal: isMobile ? 640 : 480 }
+					height: { ideal: isMobile ? 640 : 480 },
+					facingMode,
 				}
 			});
 
 			this.video.srcObject = this.stream;
+			await this.video.play();
 			this.updateUI();
 		} catch (error) {
 			alert(error.name === 'NotAllowedError'
-				? 'Camera permission denied. Please allow camera access.'
-				: 'Failed to start camera.');
+				? 'Akses kamera ditolak. Silakan izinkan akses kamera.'
+				: 'Gagal memulai kamera.');
 			this.updateUI();
 		}
 	}
 
 	/**
 	* TODO:
-	* [] Hentikan semua track pada stream kamera
- */
+	* [✓] Hentikan semua track pada stream kamera
+	*/
 	stopCamera() {
 		if (this.stream) {
 			this.stream.getTracks().forEach(track => track.stop());
