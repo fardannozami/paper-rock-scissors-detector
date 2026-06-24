@@ -16,7 +16,13 @@ class CameraIntegration {
 	 * [] Start & Stop Button 
 	 * [] Pilih FPS 
 	*/
-	initializeElements() { }
+	initializeElements() {
+		this.video = document.getElementById('videoElement');
+		this.cameraSelect = document.getElementById('cameraSelect');
+		this.startBtn = document.getElementById('startBtn');
+		this.stopBtn = document.getElementById('stopBtn');
+		this.fpsSelect = document.getElementById('fpsSelect');
+	}
 
 	/**
 	 * TODO:
@@ -25,13 +31,18 @@ class CameraIntegration {
 	 * [] Pilih kamera
 	 * [] Pilih FPS 
 	*/
-	bindEvents() { }
+	bindEvents() {
+		// this.startBtn.onClick = () => this.startCamera();
+		// this.stopBtn.onClick = () => this.stopCamera();
+	}
 
 	/**
 	 * TODO:
 	 * [] Muat daftar kamera yang tersedia
 	*/
-	async init() { }
+	async init() {
+		this.loadCamera();
+	}
 
 	/**
 	 * TODO:
@@ -49,8 +60,19 @@ class CameraIntegration {
 				this.startBtn.disabled = true;
 				return;
 			}
-			this.updateUI();
+
+
+			cameras.forEach((camera, index) => {
+				const option = document.createElement('option');
+				option.value = camera.deviceId;
+				option.text = camera.label || `Camera ${index + 1}`;
+				this.cameraSelect.appendChild(option);
+			});
+
+			this.cameraSelect.disabled = false;
+			this.startBtn.disabled = cameras.length === 0;
 		} catch (error) {
+			console.error(error);
 			this.startBtn.disabled = true;
 		}
 	}
@@ -62,12 +84,25 @@ class CameraIntegration {
 	 * [] Optimasi frame rate
 	*/
 	async startCamera() {
+		const isMobile = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+
 
 		try {
 			this.startBtn.disabled = true;
 			this.startBtn.textContent = 'Starting...';
 
-			this.stream = null;
+			const deviceList = this.cameraSelect.value ? { exact: this.cameraSelect.value } : undefined;
+			const facingMode = isMobile ? 'user' : 'environtment';
+
+			this.stream = await navigator.mediaDevices.getUserMedia({
+				video: {
+					deviceId: deviceList,
+					facingMode: facingMode,
+					width: { ideal: isMobile ? 480 : 640 },
+					height: { ideal: isMobile ? 640 : 480 }
+				}
+			});
 
 			this.video.srcObject = this.stream;
 			this.updateUI();
@@ -84,6 +119,11 @@ class CameraIntegration {
 	* [] Hentikan semua track pada stream kamera
  */
 	stopCamera() {
+		if (this.stream) {
+			this.stream.getTracks().forEach(track => track.stop());
+			this.stream = null;
+			this.video.srcObject = null;
+		}
 		this.updateUI();
 	}
 

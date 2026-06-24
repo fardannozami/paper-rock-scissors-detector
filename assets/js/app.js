@@ -1,3 +1,5 @@
+import CameraIntegration from "./camera.js";
+
 class App {
 	constructor() {
 		this.camera = null;
@@ -18,11 +20,7 @@ class App {
 	 * [] Hasil Prediksi
 	*/
 	initializeElements() {
-		this.video = document.getElementById('videoElement');
-		this.cameraSelect = document.getElementById('cameraSelect');
-		this.startBtn = document.getElementById('startBtn');
-		this.stopBtn = document.getElementById('stopBtn');
-		this.fpsSelect = document.getElementById('fpsSelect');
+
 	}
 
 	/**
@@ -33,12 +31,15 @@ class App {
 
 	/**
 	 * TODO:
-	 * [] Panggil konstruktor CameraIntegration
+	 * [✓] Panggil konstruktor CameraIntegration
 	 * [] Panggil konstruktor ObjectDetector
 	 * [] Load model
 	*/
 	async init() {
-		try { } catch (error) {
+		try {
+			this.camera = new CameraIntegration();
+
+		} catch (error) {
 			console.error('Error initializing app:', error);
 		}
 	}
