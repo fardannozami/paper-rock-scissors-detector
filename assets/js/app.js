@@ -25,6 +25,7 @@ class App {
         this.canvas = document.getElementById('canvasElement');
         this.predictionLabel = document.getElementById('predictionLabel');
         this.predictionConfidence = document.getElementById('predictionConfidence');
+        this.confidenceBar = document.getElementById('confidenceBar');
     }
 
     bindEvents() {
@@ -40,7 +41,7 @@ class App {
      * [*] Panggil konstruktor CameraIntegration
      * [*] Panggil konstruktor ObjectDetector
      * [*] Load model
-    */
+     */
     async init() {
         try {
             this.camera = new CameraIntegration();
@@ -58,7 +59,7 @@ class App {
      * TODO:
      * [*] Implementasi metode untuk memulai dan menghentikan prediksi
      * [*] Implementasi metode prediksi
-    */
+     */
     startPrediction() {
         if (this.isRunning) return;
         this.isRunning = true;
@@ -95,12 +96,19 @@ class App {
 
     updateDisplay(result) {
         this.predictionLabel.textContent = result.className || 'Unknown';
-        this.predictionConfidence.textContent = `${result.confidence || 0}%`;
+        const confidence = result.confidence || 0;
+        this.predictionConfidence.textContent = `${confidence}%`;
+        if (this.confidenceBar) {
+            this.confidenceBar.style.setProperty('--confidence-width', `${confidence}%`);
+        }
     }
     
     resetDisplay() {
         this.predictionLabel.textContent = '-';
         this.predictionConfidence.textContent = '0%';
+        if (this.confidenceBar) {
+            this.confidenceBar.style.setProperty('--confidence-width', '0%');
+        }
     }
     
     showStatus(message, status) {
