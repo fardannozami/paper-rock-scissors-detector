@@ -39,7 +39,9 @@ class ObjectDetector {
         const tensor = tf.tidy(() => 
             tf.browser.fromPixels(imageElement)
                 .resizeBilinear([224, 224])
-                .div(255.0)
+                .toFloat()
+                .div(127.5)
+                .sub(1.0)
                 .expandDims(0)
         );
 
